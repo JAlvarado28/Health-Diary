@@ -1,3 +1,4 @@
+import 'package:assignmentproject/components/header.dart';
 import 'package:assignmentproject/home.dart';
 import 'package:assignmentproject/settings.dart';
 import 'package:flutter/material.dart';
@@ -11,12 +12,7 @@ Widget getDrawer(context) {
       // Important: Remove any padding from the ListView.
       padding: EdgeInsets.zero,
       children: [
-        const DrawerHeader(
-          decoration: BoxDecoration(
-            color: Colors.blue,
-          ),
-          child: Text('Menu'),
-        ),
+        const AppHeader(),
         ListTile(
           title: const Text('Home'),
           onTap: () {

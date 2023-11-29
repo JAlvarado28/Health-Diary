@@ -1,4 +1,6 @@
+import 'package:assignmentproject/components/bottomNav.dart';
 import 'package:assignmentproject/components/drawer.dart';
+import 'package:assignmentproject/components/header.dart';
 import 'package:assignmentproject/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -7,22 +9,27 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Heath Diary'),
-      ),
-      drawer: getDrawer(context),
-      body: Center(
-        child: ElevatedButton(
-          child: const Text('Go to Page 2'),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const Settings(title: 'Settings')),
-            );
-          },
-        ),
+    return const Scaffold(
+        body: Column(
+      children: [
+        AppHeader(),
+        BottomNav(),
+      ],
+    ));
+  }
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Fitness Tracker',
+      theme: ThemeData(),
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Container(),
       ),
     );
   }
