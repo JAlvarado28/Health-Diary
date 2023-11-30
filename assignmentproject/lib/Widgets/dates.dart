@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Dates extends StatefulWidget {
-  const Dates({super.key});
+  const Dates({super.key, required List<DateTime> dateList});
 
   @override
   _DatesState createState() => _DatesState();

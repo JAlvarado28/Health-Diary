@@ -7,8 +7,8 @@ import 'package:assignmentproject/Widgets/waterIntake.dart';
 import 'package:assignmentproject/Widgets/weight.dart';
 import 'package:flutter/material.dart';
 
-class Page extends StatelessWidget {
-  const Page({super.key});
+class firstPage extends StatelessWidget {
+  const firstPage({super.key});
 
   @override
   Widget build(BuildContext context) {

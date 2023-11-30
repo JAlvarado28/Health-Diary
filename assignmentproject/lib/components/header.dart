@@ -23,8 +23,8 @@ class AppHeader extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                    left: 33,
-                    bottom: 20,
+                    left: 50,
+                    bottom: 30,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -46,7 +46,6 @@ class AppHeader extends StatelessWidget {
                     ))
               ],
             )),
-        const Drawer(),
       ]),
     );
   }
