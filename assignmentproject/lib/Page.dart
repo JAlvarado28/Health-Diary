@@ -12,17 +12,29 @@ class Page extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-        body: Column(
-      children: [
-        Goals(),
-        Weight(),
-        Exercise(),
-        CalorieIntake(),
-        HeartRate(),
-        SleepPatterns(),
-        WaterIntake(),
-      ],
-    ));
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+              size: 16,
+            ),
+          ),
+        ),
+        body: const Column(
+          children: [
+            Goals(),
+            Weight(),
+            Exercise(),
+            CalorieIntake(),
+            HeartRate(),
+            SleepPatterns(),
+            WaterIntake(),
+          ],
+        ));
   }
 }
