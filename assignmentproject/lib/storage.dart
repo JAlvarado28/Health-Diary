@@ -9,28 +9,27 @@ class HealthApp {
 
   HealthApp();
 
-  Future<void> initializedDefault() async {
-    FirebaseApp app = await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    _initialized = true;
-    if (kDebugMode) {
-      print("Initialized default app $app");
+  Future<void> initializeDefault() async {
+    if (!_initialized) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      _initialized = true;
+      if (kDebugMode) {
+        print("Initialized default app");
+      }
     }
   }
 
-  bool get isInitialized => _initialized;
-
-  Future<void> writeData(
-      String week, String day, Map<String, dynamic> HealthData) async {
+  Future<void> writeData(String userId, String week, String day,
+      Map<String, dynamic> HealthData) async {
     try {
-      if (!isInitialized) await initializedDefault();
-
-//      var userId =
-//      if(userId == null) throw Exception("User not logged in");
+      // var userId =
+      // if(userId == null) throw Exception("User not logged in");
+      await initializeDefault();
       await FirebaseFirestore.instance
           .collection('users')
-          .doc('userId')
+          .doc(userId)
           .collection('weeks')
           .doc(week)
           .collection('days')
@@ -43,20 +42,39 @@ class HealthApp {
     }
   }
 
-  Future<Map<String, dynamic>?> readData(String week, String day) async {
+  Future<Map<String, dynamic>?> readData(
+      String userId, String week, String day) async {
     try {
-      if (!isInitialized) await initializedDefault();
-
-//      var userId =
-//      if(userId == null) throw Exception("User not logged in");
-      await FirebaseFirestore.instance
+      // var userId =
+      // if(userId == null) throw Exception("User not logged in");
+      await initializeDefault();
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
           .collection('users')
-          .doc('userId')
+          .doc(userId)
           .collection('weeks')
           .doc(week)
           .collection('days')
           .doc(day)
           .get();
+
+      if (snapshot.exists && snapshot.data() != null) {
+        return snapshot.data() as Map<String, dynamic>;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+    return null;
+  }
+
+  Future<void> StoreUserID(String userId, String email) async {
+    try {
+      await initializeDefault();
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .set({'email': email}, SetOptions(merge: true));
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());
@@ -64,33 +82,3 @@ class HealthApp {
     }
   }
 }
-
-
-//   Future<int> readCounter() async {
-//     try {
-//       if (!isInitialized) {
-//         await initializeDefault();
-//       }
-//       FirebaseFirestore firestore = FirebaseFirestore.instance;
-//       DocumentSnapshot ds =
-//           await firestore.collection("example").doc("counter").get();
-//       if (ds.exists && ds.data() != null) {
-//         Map<String, dynamic> data = (ds.data() as Map<String, dynamic>);
-//         if (data.containsKey("value")) {
-//           return data["value"];
-//         }
-//       }
-//       bool writeSuccess = await writeCounter(0);
-//       if (writeSuccess) {
-//         return 0;
-//       }
-//       await writeCounter(0);
-//       return 0;
-//     } catch (e) {
-//       if (kDebugMode) {
-//         print(e.toString());
-//       }
-//     }
-//     return -1;
-//   }
-// }

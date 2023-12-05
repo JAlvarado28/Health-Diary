@@ -1,4 +1,5 @@
 import 'package:assignmentproject/home.dart';
+import 'package:assignmentproject/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -8,6 +9,6 @@ void main() {
   runApp(MaterialApp(
     title: 'Health Diary',
     theme: ThemeData(),
-    home: const Home(),
+    home: SignInPage(),
   ));
 }
