@@ -1,9 +1,11 @@
+import 'package:assignmentproject/firstPage.dart';
 import 'package:assignmentproject/storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:intl/intl.dart';
 import 'firebase_options.dart';
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -23,6 +25,7 @@ class _SignInState extends State<SignInPage> {
   bool _initialized = false;
   UserCredential? _userCredential;
   GoogleSignInAccount? googleUser;
+  late final List<DateTime> dateList;
 
   Future<void> initializeDefault() async {
     if (!_initialized) {
@@ -65,8 +68,16 @@ class _SignInState extends State<SignInPage> {
     if (_userCredential != null) {
       String userID = _userCredential!.user!.uid;
       String userEmail = _userCredential!.user!.email ?? 'No email';
+      String currentDate = DateFormat('MM-dd-yyyy').format(DateTime.now());
 
-      await HealthApp().StoreUserID(userID, userEmail);
+      await HealthApp().storeUserID(userID, userEmail, currentDate);
+
+      // ignore: use_build_context_synchronously
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => firstPage(currentDate: currentDate)),
+          (Route<dynamic> route) => false);
     }
     setState(() {});
     return _userCredential!;
@@ -81,6 +92,8 @@ class _SignInState extends State<SignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
+          leading: const SizedBox(),
           title: const Text('Sign in Page'),
         ),
         body: Center(
@@ -102,7 +115,7 @@ class _SignInState extends State<SignInPage> {
       body.add(ListTile(
         leading: GoogleUserCircleAvatar(identity: googleUser!),
         title: Text(googleUser!.displayName ?? ""),
-        subtitle: Text(googleUser!.email ?? ""),
+        subtitle: Text(googleUser!.email),
       ));
       body.add(Text(FirebaseAuth.instance.currentUser!.uid));
       body.add(ElevatedButton(

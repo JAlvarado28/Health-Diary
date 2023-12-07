@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:intl/intl.dart';
 import 'firebase_options.dart';
 import "package:flutter/foundation.dart";
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -24,8 +25,6 @@ class HealthApp {
   Future<void> writeData(String userId, String week, String day,
       Map<String, dynamic> HealthData) async {
     try {
-      // var userId =
-      // if(userId == null) throw Exception("User not logged in");
       await initializeDefault();
       await FirebaseFirestore.instance
           .collection('users')
@@ -45,8 +44,6 @@ class HealthApp {
   Future<Map<String, dynamic>?> readData(
       String userId, String week, String day) async {
     try {
-      // var userId =
-      // if(userId == null) throw Exception("User not logged in");
       await initializeDefault();
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
           .collection('users')
@@ -68,13 +65,17 @@ class HealthApp {
     return null;
   }
 
-  Future<void> StoreUserID(String userId, String email) async {
+  Future<void> storeUserID(
+      String userId, String email, String currentDate) async {
     try {
       await initializeDefault();
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .set({'email': email}, SetOptions(merge: true));
+      String date = DateFormat('MM-dd-yyyy').format(DateTime.now());
+      DocumentReference userDoc =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+      await userDoc.set({'email': email}, SetOptions(merge: true));
+
+      DocumentReference dateDoc = userDoc.collection('dates').doc(date);
+      await dateDoc.set({'date': date}, SetOptions(merge: true));
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());

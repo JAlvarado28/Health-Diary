@@ -12,7 +12,7 @@ Widget getDrawer(context) {
       // Important: Remove any padding from the ListView.
       padding: EdgeInsets.zero,
       children: [
-        const AppHeader(),
+        AppHeader(),
         ListTile(
           title: const Text('Home'),
           onTap: () {

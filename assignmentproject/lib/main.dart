@@ -9,6 +9,6 @@ void main() {
   runApp(MaterialApp(
     title: 'Health Diary',
     theme: ThemeData(),
-    home: SignInPage(),
+    home: const SignInPage(),
   ));
 }

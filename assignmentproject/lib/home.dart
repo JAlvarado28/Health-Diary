@@ -11,11 +11,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // List<DateTime> dateList = List.generate(7, (index) {
-    //   DateTime today = DateTime.now();
-    //   return DateTime(today.year, today.month, today.day + index);
-    // });
-    return const Scaffold(
+    return Scaffold(
       body: Column(
         children: [
           AppHeader(),

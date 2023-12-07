@@ -1,127 +1,73 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 // create dates class
 class Dates extends StatefulWidget {
-  final String weekID;
-  const Dates({super.key, required this.weekID});
+  String dates;
+  Dates({super.key, required this.dates});
 
   @override
   // ignore: library_private_types_in_public_api
   _DatesState createState() => _DatesState();
 }
 
-// collect and write Date data
 class _DatesState extends State<Dates> {
-  List<DateTime> dateList = [];
-  Map<DateTime, dynamic> datesData = {};
+  late CalendarFormat _calendarFormat;
+  late DateTime _focusedDay;
+  late DateTime _selectedDay;
 
   @override
   void initState() {
     super.initState();
-    dateList = getPastDates();
-    getDates();
-  }
-
-//get the List of dates
-  List<DateTime> getPastDates() {
-    return List.generate(7, (index) {
-      return DateTime.now().subtract(Duration(days: index));
-    }).reversed.toList();
-  }
-
-  Future<void> getDates() async {
-    for (var date in dateList) {
-      String dateID = DateFormat('yyyyMMdd').format(date);
-
-      try {
-        DocumentSnapshot snapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc('userId')
-            .collection('weeks')
-            .doc(widget.weekID)
-            .collection('days')
-            .doc(dateID)
-            .get();
-
-        if (snapshot.exists && snapshot.data() != null) {
-          datesData[date] = snapshot.data() as Map<String, dynamic>;
-        }
-      } catch (e) {
-        if (kDebugMode) {
-          print(e.toString());
-        }
-      }
-    }
-    setState(() {});
+    _calendarFormat = CalendarFormat.week;
+    _focusedDay = DateTime.now();
+    _selectedDay = _focusedDay;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: dateList.map((date) {
-            bool isActive = date == DateTime.now();
-            return DateBox(
-              date: date,
-              active: isActive,
-              data: datesData[date],
+    return TableCalendar(
+      selectedDayPredicate: (day) {
+        return isSameDay(_selectedDay, day);
+      },
+      focusedDay: _focusedDay,
+      firstDay: DateTime.utc(2023, 11, 1),
+      lastDay: DateTime.utc(2030, 12, 25),
+      calendarFormat: _calendarFormat,
+      onDaySelected: (selectedDay, focusedDay) {
+        setState(() {
+          _selectedDay = selectedDay;
+          _focusedDay = focusedDay;
+        });
+      },
+      onFormatChanged: (format) {
+        if (_calendarFormat != format) {
+          setState(() {
+            _calendarFormat = format;
+          });
+        }
+      },
+      onPageChanged: (focusDay) {
+        _focusedDay = focusDay;
+      },
+      calendarBuilders: CalendarBuilders(
+        dowBuilder: (context, day) {
+          if (day.weekday == DateTime.sunday) {
+            final text = DateFormat.E().format(day);
+
+            return Center(
+              child: Text(
+                text,
+                style: TextStyle(color: Colors.red),
+              ),
             );
-          }).toList(),
-        ));
-  }
-}
-
-// week days box display
-class DateBox extends StatelessWidget {
-  final bool active;
-  final DateTime date;
-  final Map<String, dynamic>? data;
-
-  const DateBox({
-    super.key,
-    this.active = false,
-    required this.date,
-    this.data,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        width: 50,
-        height: 70,
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-        decoration: BoxDecoration(
-            gradient: active
-                ? const LinearGradient(colors: [
-                    Color(0xff92eff),
-                    Color(0xff1ebdf8),
-                  ], begin: Alignment.topCenter)
-                : null,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: Colors.white,
-            )),
-        child: DefaultTextStyle.merge(
-          style: active ? const TextStyle(color: Colors.white) : null,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(DateFormat('E').format(date),
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  )),
-              Text(DateFormat('d').format(date),
-                  style: TextStyle(
-                    fontSize: 30,
-                  )),
-            ],
-          ),
-        ));
+          }
+        },
+      ),
+    );
   }
 }
