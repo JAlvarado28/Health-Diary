@@ -1,5 +1,7 @@
-import 'package:assignmentproject/firstPage.dart';
+// import 'package:assignmentproject/welcome.dart';
+import 'package:assignmentproject/home.dart';
 import 'package:assignmentproject/storage.dart';
+import 'package:assignmentproject/welcome.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -77,7 +79,8 @@ class _SignInState extends State<SignInPage> {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (context) => firstPage(currentDate: currentDate)),
+              builder: (context) =>
+                  Welcome(userID: userID, currentDate: currentDate)),
           (Route<dynamic> route) => false);
     }
     setState(() {});

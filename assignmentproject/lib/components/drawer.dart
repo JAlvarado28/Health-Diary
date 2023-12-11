@@ -14,13 +14,6 @@ Widget getDrawer(context) {
       children: [
         AppHeader(),
         ListTile(
-          title: const Text('Home'),
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const Home()));
-          },
-        ),
-        ListTile(
           title: const Text('Settings'),
           onTap: () {
             Navigator.of(context).pushReplacement(MaterialPageRoute(

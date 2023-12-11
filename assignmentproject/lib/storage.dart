@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fitbitter/fitbitter.dart';
 import 'package:intl/intl.dart';
 import 'firebase_options.dart';
 import "package:flutter/foundation.dart";
@@ -98,6 +99,26 @@ class HealthApp {
       if (!existDoc.exists) {
         await dateDoc.set({'date': date}, SetOptions(merge: true));
       }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+  }
+
+  Future<void> storeFitbitUserID(
+      String userId, FitbitCredentials fitbitCredentials) async {
+    try {
+      await initializeDefault();
+      DocumentReference userDoc =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+      Map<String, dynamic> fitbitMap = {
+        'fitbitUserID': fitbitCredentials.userID,
+        'fitbitAccessToken': fitbitCredentials.fitbitAccessToken,
+        'fitbitRefreshToken': fitbitCredentials.fitbitRefreshToken,
+      };
+      await userDoc
+          .set({'fitbitCredentials': fitbitMap}, SetOptions(merge: true));
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());

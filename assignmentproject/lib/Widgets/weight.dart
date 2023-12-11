@@ -96,7 +96,7 @@ class _Weight extends State<Weight> {
               padding: const EdgeInsets.all(8.0),
               child: ExpansionTileCard(
                 key: cardA,
-                leading: const CircleAvatar(child: Icon(Icons.water)),
+                leading: const CircleAvatar(child: Icon(Icons.scale)),
                 title: const Text('Daily Weight'),
                 subtitle: currentWeight != null
                     ? Text('You weigh $currentWeight lbs today!')
