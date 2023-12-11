@@ -27,7 +27,19 @@ class _CalorieIntake extends State<CalorieIntake> {
     fetchStoredCalorie();
   }
 
+  @override
+  void didUpdateWidget(covariant CalorieIntake oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.dates != oldWidget.dates) {
+      fetchStoredCalorie();
+    }
+  }
+
   void fetchStoredCalorie() async {
+    setState(() {
+      isLoading = true;
+    });
+
     int calories = await getStoredCalorie();
     setState(() {
       calorieIntake = calories;
@@ -38,12 +50,11 @@ class _CalorieIntake extends State<CalorieIntake> {
   Future<void> storeCalorie(int? calorieIntake) async {
     try {
       String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-      String date = DateFormat('MM-dd-yyyy').format(DateTime.now());
       DocumentReference userDoc = FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
           .collection('dates')
-          .doc(date);
+          .doc(widget.dates);
 
       await userDoc
           .set({'calorieIntake': calorieIntake}, SetOptions(merge: true));
@@ -57,13 +68,11 @@ class _CalorieIntake extends State<CalorieIntake> {
   Future<int> getStoredCalorie() async {
     try {
       String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-      String date = DateFormat('MM-dd-yyyy').format(DateTime.now());
-
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('user')
+          .collection('users')
           .doc(userId)
           .collection('dates')
-          .doc(date)
+          .doc(widget.dates)
           .get();
 
       if (userDoc.exists) {
@@ -88,11 +97,11 @@ class _CalorieIntake extends State<CalorieIntake> {
               padding: const EdgeInsets.all(8.0),
               child: ExpansionTileCard(
                 key: cardA,
-                leading: const CircleAvatar(child: Icon(Icons.fastfood)),
+                leading: const CircleAvatar(child: Icon(Icons.water)),
                 title: const Text('Calorie Intake'),
                 subtitle: calorieIntake != null
-                    ? Text('Consumed $calorieIntake calories')
-                    : const Text('No data for todat'),
+                    ? Text('Ate $calorieIntake calories')
+                    : const Text('No data for today'),
                 onExpansionChanged: (expanded) {
                   setState(() {
                     isExpanded = expanded;
@@ -109,7 +118,8 @@ class _CalorieIntake extends State<CalorieIntake> {
                         children: <Widget>[
                           TextFormField(
                             decoration: const InputDecoration(
-                              labelText: 'Enter Calorie Intake',
+                              labelText:
+                                  'Enter your amount of calorie taken today',
                               border: OutlineInputBorder(),
                             ),
                             keyboardType: TextInputType.number,

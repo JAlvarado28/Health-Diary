@@ -29,10 +29,6 @@ class HealthApp {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
-          .collection('weeks')
-          .doc(week)
-          .collection('days')
-          .doc(day)
           .set(HealthData, SetOptions(merge: true));
     } catch (e) {
       if (kDebugMode) {
@@ -48,10 +44,6 @@ class HealthApp {
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
-          .collection('weeks')
-          .doc(week)
-          .collection('days')
-          .doc(day)
           .get();
 
       if (snapshot.exists && snapshot.data() != null) {
@@ -65,17 +57,47 @@ class HealthApp {
     return null;
   }
 
-  Future<void> storeUserID(
-      String userId, String email, String currentDate) async {
+  Future<void> storeUserID(String userId, String email) async {
     try {
       await initializeDefault();
-      String date = DateFormat('MM-dd-yyyy').format(DateTime.now());
       DocumentReference userDoc =
           FirebaseFirestore.instance.collection('users').doc(userId);
       await userDoc.set({'email': email}, SetOptions(merge: true));
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+  }
 
-      DocumentReference dateDoc = userDoc.collection('dates').doc(date);
+  Future<void> storeDates(String userId, String date) async {
+    try {
+      await initializeDefault();
+      DocumentReference dateDoc = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('dates')
+          .doc(date);
       await dateDoc.set({'date': date}, SetOptions(merge: true));
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+  }
+
+  Future<void> storeDatesUpdate(String userId, String date) async {
+    try {
+      DocumentReference dateDoc = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('dates')
+          .doc(date);
+
+      var existDoc = await dateDoc.get();
+      if (!existDoc.exists) {
+        await dateDoc.set({'date': date}, SetOptions(merge: true));
+      }
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());

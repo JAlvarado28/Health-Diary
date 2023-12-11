@@ -12,50 +12,36 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class firstPage extends StatelessWidget {
+class firstPage extends StatefulWidget {
   String currentDate;
   firstPage({super.key, required this.currentDate});
 
-  Future<String> getStoredDate() async {
-    String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-    DocumentSnapshot userDoc = await FirebaseFirestore.instance
-        .collection('user')
-        .doc(userId)
-        .collection('dates')
-        .doc(currentDate)
-        .get();
-    Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
-    return userData?['currentDate'] as String? ?? '';
+  @override
+  _FirstPageState createState() => _FirstPageState();
+}
+
+class _FirstPageState extends State<firstPage> {
+  void _onDateChanged(String newDate) {
+    setState(() {
+      widget.currentDate = newDate;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-              size: 16,
-            ),
-          ),
-        ),
         body: Column(
-          children: [
-            AppHeader(),
-            Dates(dates: currentDate),
-            //  Goals(dates: currentDate),
-            // Weight(),
-            // Exercise(),
-            CalorieIntake(dates: currentDate),
-            // HeartRate(),
-            // SleepPatterns(),
-            waterIntake(dates: currentDate),
-          ],
-        ));
+      children: [
+        AppHeader(),
+        Dates(dates: widget.currentDate, onDateChanged: _onDateChanged),
+        //  Goals(dates: currentDate),
+        Weight(dates: widget.currentDate),
+        // Exercise(),
+        CalorieIntake(dates: widget.currentDate),
+        // HeartRate(),
+        // SleepPatterns(),
+        WaterIntake(dates: widget.currentDate),
+      ],
+    ));
   }
 }

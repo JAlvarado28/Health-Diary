@@ -70,7 +70,8 @@ class _SignInState extends State<SignInPage> {
       String userEmail = _userCredential!.user!.email ?? 'No email';
       String currentDate = DateFormat('MM-dd-yyyy').format(DateTime.now());
 
-      await HealthApp().storeUserID(userID, userEmail, currentDate);
+      await HealthApp().storeUserID(userID, userEmail);
+      await HealthApp().storeDates(userID, currentDate);
 
       // ignore: use_build_context_synchronously
       Navigator.pushAndRemoveUntil(

@@ -6,15 +6,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:intl/intl.dart';
 
-class waterIntake extends StatefulWidget {
+class WaterIntake extends StatefulWidget {
   String dates;
-  waterIntake({super.key, required this.dates});
+  WaterIntake({super.key, required this.dates});
 
   @override
-  _waterIntake createState() => _waterIntake();
+  _WaterIntake createState() => _WaterIntake();
 }
 
-class _waterIntake extends State<waterIntake> {
+class _WaterIntake extends State<WaterIntake> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ExpansionTileCardState> cardA = GlobalKey();
   int? waterIntake;
@@ -27,7 +27,19 @@ class _waterIntake extends State<waterIntake> {
     fetchStoredCups();
   }
 
+  @override
+  void didUpdateWidget(covariant WaterIntake oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.dates != oldWidget.dates) {
+      fetchStoredCups();
+    }
+  }
+
   void fetchStoredCups() async {
+    setState(() {
+      isLoading = true;
+    });
+
     int cups = await getStoredWater();
     setState(() {
       waterIntake = cups;
@@ -38,15 +50,13 @@ class _waterIntake extends State<waterIntake> {
   Future<void> storeWater(int? waterIntake) async {
     try {
       String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-      String date = DateFormat('MM-dd-yyyy').format(DateTime.now());
       DocumentReference userDoc = FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
           .collection('dates')
-          .doc(date);
+          .doc(widget.dates);
 
-      await userDoc
-          .set({'calorieIntake': waterIntake}, SetOptions(merge: true));
+      await userDoc.set({'waterIntake': waterIntake}, SetOptions(merge: true));
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());
@@ -57,13 +67,11 @@ class _waterIntake extends State<waterIntake> {
   Future<int> getStoredWater() async {
     try {
       String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-      String date = DateFormat('MM-dd-yyyy').format(DateTime.now());
-
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('user')
+          .collection('users')
           .doc(userId)
           .collection('dates')
-          .doc(date)
+          .doc(widget.dates)
           .get();
 
       if (userDoc.exists) {
