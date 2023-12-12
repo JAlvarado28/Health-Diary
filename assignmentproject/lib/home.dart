@@ -3,7 +3,7 @@ import 'package:assignmentproject/Widgets/calorieIntake.dart';
 import 'package:assignmentproject/Widgets/dates.dart';
 import 'package:assignmentproject/Widgets/exercise.dart';
 import 'package:assignmentproject/Widgets/goals.dart';
-import 'package:assignmentproject/Widgets/sleepPatterns.dart';
+// import 'package:assignmentproject/Widgets/sleepPatterns.dart';
 import 'package:assignmentproject/Widgets/waterIntake.dart';
 import 'package:assignmentproject/Widgets/weight.dart';
 import 'package:assignmentproject/components/header.dart';
@@ -40,10 +40,10 @@ class _Home extends State<Home> {
         CalorieIntake(dates: widget.currentDate),
         WaterIntake(dates: widget.currentDate),
         Goals(dates: widget.currentDate),
-        if (widget.fitbitconnected) const HeartRate(),
-        if (widget.fitbitconnected) const SleepPatterns(),
+        if (widget.fitbitconnected) HeartRate(),
+        // if (widget.fitbitconnected) SleepPatterns(dates: widget.currentDate),
         if (!widget.fitbitconnected) _Disabled("Heart Rate"),
-        if (!widget.fitbitconnected) _Disabled("Sleep Patterns")
+        // if (!widget.fitbitconnected) _Disabled("Sleep Patterns")
       ],
     ));
   }

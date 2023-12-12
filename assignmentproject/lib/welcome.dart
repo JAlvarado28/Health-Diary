@@ -24,16 +24,19 @@ class _WelcomePage extends State<Welcome> {
       FitbitCredentials? fitbitCredentials = await FitbitConnector.authorize(
         clientID: '23RJW6',
         clientSecret: '0e2f9ee7fc48449c2268b95633e32cf5',
-        redirectUri: 'https://www.fitbit.com/oauth2/authorize',
-        callbackUrlScheme: 'MyHealthDiary://callback',
+        redirectUri: 'myhealthdiary://callback',
+        callbackUrlScheme: 'myhealthdiary',
       );
       if (fitbitCredentials != null) {
-        setState(() {
-          _fitbitConnected = true;
-        });
+        await HealthApp().storeFitbitUserID(widget.userID, fitbitCredentials);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                Home(currentDate: widget.currentDate, fitbitconnected: true),
+          ),
+        );
       }
-
-      await HealthApp().storeFitbitUserID(widget.userID, fitbitCredentials!);
     } catch (e) {
       print(e.toString());
     }

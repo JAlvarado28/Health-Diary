@@ -18,7 +18,7 @@ Widget getDrawer(context) {
           onTap: () {
             Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (context) => const Settings(
-                      title: 'Settings',
+                    // title: 'Settings',
                     )));
           },
         ),

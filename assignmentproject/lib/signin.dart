@@ -98,7 +98,7 @@ class _SignInState extends State<SignInPage> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           leading: const SizedBox(),
-          title: const Text('Sign in Page'),
+          title: const Text('Welcome to Health Diary App'),
         ),
         body: Center(
             child: Column(
