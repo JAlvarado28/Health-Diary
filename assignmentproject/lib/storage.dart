@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fitbitter/fitbitter.dart';
 import 'package:intl/intl.dart';
@@ -124,5 +125,39 @@ class HealthApp {
         print(e.toString());
       }
     }
+  }
+
+  Future<void> storeBool(String userId, bool trigger) async {
+    try {
+      await initializeDefault();
+      DocumentReference userDoc =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+
+      await userDoc.set({'fitbitBool': trigger}, SetOptions(merge: true));
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+  }
+
+  Future<bool> getStoredBool() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      if (userDoc.exists) {
+        Map<String, dynamic>? userData =
+            userDoc.data() as Map<String, dynamic>?;
+        return userData?['fitbitBool'];
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+    return false;
   }
 }

@@ -217,7 +217,7 @@ class _Exercise extends State<Exercise> {
                 title: const Text('Exercise Diary'),
                 subtitle: amountOfExercise != null
                     ? Text(
-                        'You did $amountOfExercise exercises in $hoursOfExercise hrs')
+                        'You did $amountOfExercise exercises in $hoursOfExercise hrs : $typesOfExercise')
                     : const Text('No data for today'),
                 onExpansionChanged: (expanded) {
                   setState(() {
@@ -285,7 +285,8 @@ class _Exercise extends State<Exercise> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a value';
                               }
-                              if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
+                              if (!RegExp(r'^[a-zA-Z0-9, ]+$')
+                                  .hasMatch(value)) {
                                 return 'Please no special characters';
                               }
                               return null;

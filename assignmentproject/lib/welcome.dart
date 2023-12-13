@@ -1,3 +1,4 @@
+import 'package:assignmentproject/components/bottomNav.dart';
 import 'package:assignmentproject/home.dart';
 import 'package:assignmentproject/storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,6 +20,11 @@ class Welcome extends StatefulWidget {
 class _WelcomePage extends State<Welcome> {
   bool _fitbitConnected = false;
 
+  void fetchBool() async {
+    _fitbitConnected = await HealthApp().getStoredBool();
+    setState(() {});
+  }
+
   void _connect() async {
     try {
       FitbitCredentials? fitbitCredentials = await FitbitConnector.authorize(
@@ -28,13 +34,14 @@ class _WelcomePage extends State<Welcome> {
         callbackUrlScheme: 'myhealthdiary',
       );
       if (fitbitCredentials != null) {
+        bool trigger = true;
         await HealthApp().storeFitbitUserID(widget.userID, fitbitCredentials);
-        Navigator.pushReplacement(
-          context,
+        await HealthApp().storeBool(widget.userID, trigger);
+        fetchBool();
+        Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) =>
-                Home(currentDate: widget.currentDate, fitbitconnected: true),
-          ),
+              builder: (context) =>
+                  NavigationBarApp(trigger: _fitbitConnected)),
         );
       }
     } catch (e) {
@@ -74,12 +81,11 @@ class _WelcomePage extends State<Welcome> {
               child: const Text("Connect Fitbit"),
             ),
             TextButton(
-              onPressed: () => Navigator.pushReplacement(
-                context,
+              onPressed: () => Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
-                    builder: (context) => Home(
-                        currentDate: widget.currentDate,
-                        fitbitconnected: _fitbitConnected)),
+                  builder: (context) =>
+                      NavigationBarApp(trigger: _fitbitConnected),
+                ),
               ),
               child: const Text("Skip for now"),
             ),

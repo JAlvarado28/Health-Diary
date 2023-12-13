@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:fitbitter/fitbitter.dart';
+import 'dart:async';
 
 class HeartRate extends StatefulWidget {
   const HeartRate({super.key});
@@ -22,13 +23,21 @@ class _HeartRate extends State<HeartRate> {
   bool isLoading = true;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ExpansionTileCardState> cardA = GlobalKey();
+  Timer? _timer;
 
   bool isExpanded = false;
 
   @override
   void initState() {
     super.initState();
+    getHeartRateLimit();
     fetchHBP();
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+
+    _timer = Timer.periodic(Duration(minutes: 2), (Timer t) => fetchHBP());
   }
 
   Future<void> fetchHBP() async {
@@ -79,13 +88,14 @@ class _HeartRate extends State<HeartRate> {
         Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
         if (data != null && data.containsKey('fitbitCredentials')) {
           Map<String, dynamic> credentials = data['fitbitCredentials'];
-          String userID = userDoc['userID'];
-          String accessToken = userDoc['accessToken'];
-          String refreshToken = userDoc['refreshToken'];
-          return FitbitCredentials(
-              userID: userID,
-              fitbitAccessToken: accessToken,
-              fitbitRefreshToken: refreshToken);
+          if (credentials.containsKey('fitbitAccessToken') &&
+              credentials.containsKey('fitbitRefreshToken') &&
+              credentials.containsKey('fitbitUserID')) {
+            return FitbitCredentials(
+                userID: credentials['fitbitUserID'],
+                fitbitAccessToken: credentials['fitbitAccessToken'],
+                fitbitRefreshToken: credentials['fitbitRefreshToken']);
+          }
         }
       }
     } catch (e) {
@@ -93,10 +103,7 @@ class _HeartRate extends State<HeartRate> {
         print(e.toString());
       }
     }
-    return FitbitCredentials(
-        userID: "userID",
-        fitbitAccessToken: "fitbitAccessToken",
-        fitbitRefreshToken: "fitbitRefreshToken");
+    throw Exception('Fibit credentials are not found');
   }
 
   void checkHBP(int? heartRate) {
@@ -158,6 +165,19 @@ class _HeartRate extends State<HeartRate> {
     return 0;
   }
 
+  void getHeartRateLimit() async {
+    int storedLimit = await getStoredHeartLimit();
+    setState(() {
+      limit = storedLimit;
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return isLoading
@@ -202,6 +222,9 @@ class _HeartRate extends State<HeartRate> {
                               }
                               if (int.tryParse(value)! <= 0) {
                                 return 'Please enter a positive number';
+                              }
+                              if (limit < restingHeartRate!) {
+                                showAlert();
                               }
                               return null;
                             },

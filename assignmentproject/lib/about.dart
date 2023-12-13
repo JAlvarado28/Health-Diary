@@ -9,8 +9,9 @@ class About extends StatelessWidget {
       appBar: AppBar(
         title: const Text('About Page'),
       ),
-      body: const Padding(
-        padding: const EdgeInsets.all(8.0),
+      body: const SingleChildScrollView(
+          child: Padding(
+        padding: EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -53,7 +54,7 @@ comprehensive tool for tracking, analyzing, and improving their overall health.
             )
           ],
         ),
-      ),
+      )),
     );
   }
 }
