@@ -40,8 +40,7 @@ class _WelcomePage extends State<Welcome> {
         fetchBool();
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-              builder: (context) =>
-                  NavigationBarApp(trigger: _fitbitConnected)),
+              builder: (context) => NavigationBarApp(trigger: trigger)),
         );
       }
     } catch (e) {

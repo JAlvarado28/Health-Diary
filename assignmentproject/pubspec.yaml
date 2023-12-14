@@ -38,13 +38,15 @@ dependencies:
   firebase_core: ^2.21.0
   cloud_firestore: ^4.12.2
   fitbitter: ^2.0.2
-  image_picker: ^1.0.4
+  image_picker: ^1.0.5
   geolocator: ^10.0.1
   intl: 
   firebase_auth: ^4.15.0
   google_sign_in: ^6.1.6
   table_calendar: ^3.0.9
   expansion_tile_card: ^3.0.0
+  firebase_storage: ^11.5.6
+  uuid: ^4.2.2
 
 dev_dependencies:
   flutter_test:

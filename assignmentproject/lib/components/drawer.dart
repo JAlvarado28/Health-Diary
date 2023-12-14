@@ -45,12 +45,7 @@ Widget getDrawer(context) {
         ListTile(
           leading: const Icon(Icons.bar_chart),
           title: const Text('Daily Progress'),
-          onTap: () {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => Progress(
-                      currentDate: currentDate,
-                    )));
-          },
+          onTap: () {},
         ),
       ],
     ),

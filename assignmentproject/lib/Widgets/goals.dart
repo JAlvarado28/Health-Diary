@@ -199,7 +199,8 @@ class _Goals extends State<Goals> {
                 leading: const CircleAvatar(child: Icon(Icons.list)),
                 title: const Text('Goal'),
                 subtitle: idealWeight != null
-                    ? Text('Your weight goal is $idealWeight lbs')
+                    ? Text(
+                        'Your weight goal is $idealWeight lbs. Your calorie goal is $idealCalories. Your ideal hours of workout is $idealHours')
                     : const Text('No data for today'),
                 onExpansionChanged: (expanded) {
                   setState(() {
@@ -261,7 +262,7 @@ class _Goals extends State<Goals> {
                             ),
                             keyboardType: TextInputType.number,
                             onSaved: (value) {
-                              idealCalories = int.tryParse(value ?? '');
+                              idealHours = int.tryParse(value ?? '');
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
